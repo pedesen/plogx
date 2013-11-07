@@ -9,13 +9,20 @@ app = Flask("log_db")
 mongo = PyMongo(app)
 app.debug = True
 
-@app.route('/')
+@app.route("/")
 def overview():
-    return render_template('index.html')
+    return render_template("index.html")
 
-@app.route('/all_items')
+@app.route("/all_items")
 def all_items():
     return dumps(database.all_log_items(mongo.db))
+
+@app.route("/stats_per_day/<int:date>")
+def stats_per_day(date):
+    d = str(date)
+    day = datetime(int(d[:4]), int(d[4:6]), int(d[6:]))
+    log_items = database.get_stats_per_day(mongo.db, day)
+    return dumps(log_items)
 
 if __name__ == "__main__":
     app.run()
