@@ -8,6 +8,7 @@ class TestMongoDBFunctions(unittest.TestCase):
     def setUp(self):
         self.client = MongoClient()
         self.db = self.client.test_db
+
         self.dummy_log_items = [{
             'path': u'/abc',
             'timestamp': datetime(2013, 11, 13),
@@ -29,42 +30,27 @@ class TestMongoDBFunctions(unittest.TestCase):
             'timestamp': datetime(2013, 11, 12),
             'ip_address': "192.168.1.1"
             }]
-        self.all_paths = list(set([x['path'] for x in self.dummy_log_items]))
-        self.all_paths.sort()
         self.ids = self.db.log_items.insert(self.dummy_log_items)
 
 
-    def test_get_all_paths(self):
-        all_paths = database.get_all_paths(self.db)
-        all_paths.sort()
-        self.assertEqual(self.all_paths, all_paths)
-
-
-    def test_distinct_paths(self):
-        paths = [x['_id'] for x in (database.distinct_paths(self.db))]
-        paths.sort()
-        self.assertEqual(self.all_paths, paths)
-
-
-    def test_get_stats_per_day(self):
+    def test_stats_per_day(self):
         day = datetime(2013, 11, 12, 23, 44)
+        stats = database.get_stats_per_day(self.db, day)
 
-        # get all log_items from self.dummy_log_items, which are dated at
-        # the specified day
-        log_items = [x for x in self.dummy_log_items if day.date() \
-            <= x['timestamp'].date() < day.date() + timedelta(days=1)]
+        self.assertEqual(
+            stats["num_page_impressions"],
+            len(set([(x["path"], x["ip_address"]) \
+                for x in self.dummy_log_items])))
+
+        self.assertEqual(
+            stats["num_visits"],
+            len(set([x["ip_address"] for x in self.dummy_log_items])))
         
-        # get all log_items from the database, which are dated at the
-        # specified day
-        log_items_db = database.get_stats_per_day(self.db, day)
 
-        # get a list of unique values for specific key in a log_item list
-        get_values = lambda log_items, key: set([z[key] for z in log_items])
-
-        # check for each key if the values are the same as specified in setUp
-        for key in ["ip_address", "path"]:
-            self.assertEqual(get_values(log_items_db, key), \
-                get_values(log_items, key))
+    def tearDown(self):
+        self.db.log_items.remove()
+        self.db.stats_per_day.remove()
+        self.db.stats_per_month.remove()
 
 if __name__ == '__main__':
     unittest.main()

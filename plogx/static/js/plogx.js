@@ -1,6 +1,5 @@
 $(document).ready(function(){
-	$.getJSON( "/all_items", function( data ) {
-		console.log(data);
-		alert("Logs loaded (see console)");
+	$.getJSON( "/stats_per_day/20131106", function( data ) {
+		console.log(data)
 	});
 });
