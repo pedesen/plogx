@@ -42,18 +42,25 @@ def _aggregate_day_stats(db, log_day):
         "path_stats": path_stats
         }
 
-    print stats_document
     return stats_document
 
 
 def get_stats_per_day(db, log_day):
-
+    """
+    Generates a stats document, which includes the number of page impressions,
+    the total number of visits and a list of path/ip-address combinations
+    for one specific day. This document gets saved in log_db.stats_per_day,
+    unless log_day is doday.
+    @return stats document [dict]
+    """
     log_day = datetime.combine(log_day.date(), datetime.min.time())
-
     stats_document = db.stats_per_day.find_one({"_id": log_day})
     if not stats_document:
+        # If no document is saved for the specified day, genereate one.
         stats_document = _aggregate_day_stats(db, log_day)
-        db.stats_per_day.insert(stats_document)
+        if datetime.now().date() != log_day.date():
+            # Save the document, unless the log date is today
+            db.stats_per_day.insert(stats_document)
     return stats_document
 
 
