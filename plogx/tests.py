@@ -23,12 +23,12 @@ class TestMongoDBFunctions(unittest.TestCase):
             'ip_address': "192.168.1.1"
             },{
             'path': u'/abc',
-            'timestamp': datetime(2013, 10, 12),
+            'timestamp': datetime(2013, 8, 12),
             'ip_address': "127.0.0.1"
             },{
             'path': u'/abc',
             'timestamp': datetime(2013, 10, 12),
-            'ip_address': "192.168.1.1"
+            'ip_address': "192.168.1.2"
             }]
         self.ids = self.db.log_items.insert(self.dummy_log_items)
 
@@ -41,14 +41,12 @@ class TestMongoDBFunctions(unittest.TestCase):
             "_id": datetime.combine(day, datetime.min.time())})
         self.assertIsNotNone(stats_db)
 
-        self.assertEqual(
-            stats["num_page_impressions"],
-            len(set([(x["path"], x["ip_address"]) \
-                for x in self.dummy_log_items])))
+        dummy_stats = []
+        for item in self.dummy_log_items:
+            if item["timestamp"].date() == day.date():
+                dummy_stats.append((item["path"], item["ip_address"]))
 
-        self.assertEqual(
-            stats["num_visits"],
-            len(set([x["ip_address"] for x in self.dummy_log_items])))
+        self.assertEqual(stats["num_page_impressions"],len(set(dummy_stats)))
 
         # The stats document should not be saved in log_db.stats_per_day
         # for the current day.
@@ -56,6 +54,34 @@ class TestMongoDBFunctions(unittest.TestCase):
         database.get_stats_per_day(self.db, day)
         self.assertIsNone(self.db.stats_per_day.find_one({"_id": day}))
 
+
+    def test_stats_per_month(self):
+        month = datetime.combine(datetime(2013, 10, 01), datetime.min.time())
+
+        # check, if the stats for past month 10 get saved in log_db.stats_per_month
+        stats = database.get_stats_per_month(self.db, month)
+        self.assertIsNotNone(self.db.stats_per_month.find_one({"_id": month}))
+
+        # check, if the days are in correct order
+        for day in range(1,30):
+            self.assertEqual(stats["day_stats"][day-1]["day"],\
+                datetime(2013, 10, day))
+
+        # check, if the stats for october 12th are correct
+        day_stats = stats["day_stats"][11]
+        self.assertEqual(day_stats["num_page_impressions"], 3)
+        self.assertEqual(day_stats["num_visits"], 2)
+
+        # get correct values for months without any visits
+        stats = database.get_stats_per_month(self.db, datetime(1999, 1, 1))
+        self.assertEqual(stats["num_page_impressions"], 0)
+        self.assertEqual(stats["num_visits"], 0)
+
+        # the stats document should not be saved in log_db.stats_per_month
+        # for the current month
+        month = datetime.combine(datetime.now(), datetime.min.time())
+        stats = database.get_stats_per_month(self.db, month)
+        self.assertIsNone(self.db.get_stats_per_month.find_one({"_id": month}))
 
     def tearDown(self):
         self.db.log_items.remove()
