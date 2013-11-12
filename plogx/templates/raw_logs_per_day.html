@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block head %}
+
+<style type="text/css">
+table th,
+table td {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Timestamp</th>
+        <th>Path</th>
+        <th>IP Address</th>
+        <th>Client</th>
+    </tr>
+    {% for item in log_items %}
+    <tr>
+        <td>{{ item.timestamp }}</td>
+        <td>{{ item.path|truncate(40, killwords=True) }}</td>
+        <td>{{ item.ip_address}}</td>
+        <td>{{ item.client|truncate(40) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -122,3 +122,12 @@ def get_stats_per_month(db, log_month):
         if datetime.now().strftime("%Y%m") != log_month.strftime("%Y%m"):
             db.stats_per_month.insert(stats_document)
     return stats_document
+
+def get_raw_logs_per_day(db,log_day):
+    """
+    @return: a cursor containing all log items for the specified day
+        [pymongo.cursor.Cursor]
+    """
+    start_date = datetime.combine(log_day.date(), datetime.min.time())
+    end_date = start_date + timedelta(days=1)
+    return db.log_items.find({"timestamp": {"$gte": start_date, "$lt": end_date}})

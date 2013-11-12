@@ -77,6 +77,22 @@ class TestMongoDBFunctions(unittest.TestCase):
         stats = database.get_stats_per_month(self.db, month)
         self.assertIsNone(self.db.get_stats_per_month.find_one({"_id": month}))
 
+
+    def test_raw_logs_per_day(self):
+        day = datetime.combine(datetime(2013, 10, 12), datetime.min.time())
+
+        items = [x for x in self.dummy_log_items \
+            if x["timestamp"].date() == day.date()]
+        items_db = [x for x in database.get_raw_logs_per_day(self.db, day)]
+
+        # check if the number of items matches the number of items retreived
+        self.assertEqual(len(items), len(items_db))
+
+        # check if the function returns a Cursor
+        for item in items:
+            self.assertTrue(item in items_db)
+
+
     def tearDown(self):
         self.db.log_items.remove()
         self.db.stats_per_day.remove()

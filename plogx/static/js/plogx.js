@@ -12,7 +12,7 @@ $(document).ready(function(){
             chart_page_impr.push([i+1, day_stats[i]["num_page_impressions"]])
             console.log(new Date(day_stats[i]["day"]["$date"]));
         }
-
+        /*
         chart_visits = new Array();
         chart_page_impr = new Array();
         for (var i = 0; i < 30; i++) {
@@ -22,6 +22,7 @@ $(document).ready(function(){
           chart_visits.push([i+1, visits]);
           chart_page_impr.push([i+1, page_impr]);
         }
+        */
 
         var dataset = [{
           label: "Page Impressions",
@@ -74,7 +75,8 @@ $(document).ready(function(){
 
           $("#day_stats").html("Stats for "+ moment(day).format("MMMM Do YYYY")+":<br/>"+
             "Page Impressions: "+data["num_page_impressions"]+"<br/>"+
-            "Visitors: "+data["num_visits"]+"<br/><br/>"+
+            "Visitors: "+data["num_visits"]+"<br/>"+
+            "<a href='/raw_logs_per_day/"+moment(day).format("YYYYMMDD")+"'>Raw Log Data</a><br/><br/>"+
             "Paths:<br/>"+paths
           );
 
