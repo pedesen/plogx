@@ -1,4 +1,4 @@
 plogx
 =====
 
-plogx is a webinterface for nginx log items stored in a mongodb database
+plogx is a Flask webapp, which analyses nginx log items stored in a mongodb database
