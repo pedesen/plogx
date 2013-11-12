@@ -48,12 +48,6 @@ class TestMongoDBFunctions(unittest.TestCase):
 
         self.assertEqual(stats["num_page_impressions"],len(set(dummy_stats)))
 
-        # The stats document should not be saved in log_db.stats_per_day
-        # for the current day.
-        day = datetime.combine(datetime.now(), datetime.min.time())
-        database.get_stats_per_day(self.db, day)
-        self.assertIsNone(self.db.stats_per_day.find_one({"_id": day}))
-
 
     def test_stats_per_month(self):
         month = datetime.combine(datetime(2013, 10, 01), datetime.min.time())

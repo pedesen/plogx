@@ -33,7 +33,9 @@ def _aggregate_day_stats(db, log_day):
             path_stats_dict[path] = 1
         else:
             path_stats_dict[path] += 1
-    path_stats = [{"path": k, "num_page_impression": v} for k,v in path_stats_dict.items()]
+    path_stats = [{"path": k, "num_visits": v} \
+        for k,v in path_stats_dict.items()]
+    path_stats = sorted(path_stats, key=lambda x: -x["num_visits"])
 
     stats_document = {
         "_id": start_date,
@@ -60,8 +62,8 @@ def _aggregate_month_stats(db, log_month):
 
     # aggregate day stats for each day of the month
     for day in range(1, last_day + 1):
-        current_month = datetime(log_month.year, log_month.month, day)
-        get_stats_per_day(db, current_month)
+        current_day = datetime(log_month.year, log_month.month, day)
+        get_stats_per_day(db, current_day)
 
     day_stats = db.stats_per_day.aggregate([
         {"$match":
@@ -99,12 +101,17 @@ def get_stats_per_day(db, log_day):
     """
     log_day = datetime.combine(log_day.date(), datetime.min.time())
     stats_document = db.stats_per_day.find_one({"_id": log_day})
-    if not stats_document:
+    if not stats_document or datetime.now().date() == log_day.date():
         # If no document is saved for the specified day, genereate one.
+        # if the specific day is today, the document will always be generated.
         stats_document = _aggregate_day_stats(db, log_day)
-        if datetime.now().date() != log_day.date():
-            # Save the document, unless the log date is today
+        try:
             db.stats_per_day.insert(stats_document)
+        except DuplicateKeyError:
+            date = stats_document["_id"]
+            del(stats_document["_id"])
+            db.stats_per_day.update({"_id": date}, {"$set": stats_document})
+
     return stats_document
 
 
