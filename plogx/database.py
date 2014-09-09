@@ -83,20 +83,35 @@ def _aggregate_month_stats(db, log_month):
             "_id": 0,
             "day": "$_id",
             "num_page_impressions": "$num_page_impressions",
-            "num_visits": "$num_visits"}}
+            "num_visits": "$num_visits",
+            "path_stats": "$path_stats"}}
         ])["result"]
 
     stats_document = {
         "_id": start_date,
         "day_stats": day_stats,
         "num_page_impressions": 0,
-        "num_visits": 0
+        "num_visits": 0,
+        "path_stats": None
     }
 
+    path_stats_dict = {}
     for day in day_stats:
         stats_document["num_page_impressions"] += day["num_page_impressions"]
         stats_document["num_visits"] += day["num_visits"]
 
+        for path in day["path_stats"]:
+            pathname = path["path"]
+            if pathname not in path_stats_dict:
+                path_stats_dict[pathname] = path["num_visits"]
+            else:
+                path_stats_dict[pathname] += path["num_visits"]
+        
+
+    path_stats = [{"path": k, "num_visits": v} \
+        for k,v in path_stats_dict.items()]
+    path_stats = sorted(path_stats, key=lambda x: -x["num_visits"])
+    stats_document["path_stats"] = path_stats
     return stats_document
 
 
@@ -122,7 +137,6 @@ def get_stats_per_day(db, log_day):
             db.stats_per_day.update({"_id": date}, {"$set": stats_document})
 
     return stats_document
-
 
 def get_stats_per_month(db, log_month):
     stats_document = db.stats_per_month.find_one({"_id": log_month})

@@ -29,9 +29,12 @@ class TestMongoDBFunctions(unittest.TestCase):
             'path': u'/abc',
             'timestamp': datetime(2013, 10, 12),
             'ip_address': "192.168.1.2"
+            },{
+            'path': u'/abc',
+            'timestamp': datetime(2013, 10, 12),
+            'ip_address': "192.168.1.2"
             }]
         self.ids = self.db.log_items.insert(self.dummy_log_items)
-
 
     def test_stats_per_day(self):
         day = datetime(2013, 10, 12, 23, 44)
@@ -47,7 +50,6 @@ class TestMongoDBFunctions(unittest.TestCase):
                 dummy_stats.append((item["path"], item["ip_address"]))
 
         self.assertEqual(stats["num_page_impressions"],len(set(dummy_stats)))
-
 
     def test_stats_per_month(self):
         month = datetime.combine(datetime(2013, 10, 01), datetime.min.time())
@@ -77,6 +79,13 @@ class TestMongoDBFunctions(unittest.TestCase):
         stats = database.get_stats_per_month(self.db, month)
         self.assertIsNone(self.db.get_stats_per_month.find_one({"_id": month}))
 
+    def test_stats_per_path_per_month(self):
+        month = datetime.combine(datetime(2013, 10, 01), datetime.min.time())
+        stats = database.get_stats_per_month(self.db, month)
+
+        # get correct values for number of path visits
+        self.assertEqual(stats["path_stats"]["/abc"], 3)
+        self.assertEqual(stats["path_stats"]["/def"], 1)
 
     def test_raw_logs_per_day(self):
         day = datetime.combine(datetime(2013, 10, 12), datetime.min.time())
@@ -91,7 +100,6 @@ class TestMongoDBFunctions(unittest.TestCase):
         # check if the function returns a Cursor
         for item in items:
             self.assertTrue(item in items_db)
-
 
     def tearDown(self):
         self.db.log_items.remove()
