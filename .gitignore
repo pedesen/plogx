@@ -1,3 +1,4 @@
 /env
 *.pyc
 *.*~
+/plogx/static/css

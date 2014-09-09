@@ -12,14 +12,7 @@ app.debug = True
 
 @app.route("/")
 def overview():
-    return render_template("index.html")
-
-@app.route("/stats_per_day/<int:date>")
-def stats_per_day(date):
-    d = str(date)
-    day = datetime(int(d[:4]), int(d[4:6]), int(d[6:]))
-    log_items = database.get_stats_per_day(mongo.db, day)
-    return dumps(log_items)
+    return render_template("stats.html")
 
 @app.route("/raw_logs_per_day/<int:date>")
 def raw_logs_per_day(date):
@@ -27,6 +20,13 @@ def raw_logs_per_day(date):
     day = datetime(int(d[:4]), int(d[4:6]), int(d[6:]))
     log_items = database.get_raw_logs_per_day(mongo.db, day)
     return render_template("raw_logs_per_day.html", log_items=log_items)
+
+@app.route("/stats_per_day/<int:date>")
+def stats_per_day(date):
+    d = str(date)
+    day = datetime(int(d[:4]), int(d[4:6]), int(d[6:]))
+    log_items = database.get_stats_per_day(mongo.db, day)
+    return dumps(log_items)
 
 @app.route("/stats_per_month")
 @app.route("/stats_per_month/<int:date>")

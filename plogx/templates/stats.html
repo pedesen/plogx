@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<div id="header">
+	<a href="#" id="prev">&lt;</a>
+	<span id="current_month"></span>
+	<a href="#" id="next">&gt;</a>
+</div>
+
 <div id="month_stats" style="width:1000px; height:300px;"></div>
 <div id="day_stats" style="margin-top:50px;"></div>
 {% endblock %}
