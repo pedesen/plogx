@@ -3,11 +3,12 @@
 {% block content %}
 
 <div id="header">
-	<a href="#" id="prev">&lt;</a>
+	<a href="" id="prev">&#8630;</a>
 	<span id="current_month"></span>
-	<a href="#" id="next">&gt;</a>
+	<a href="" id="next">&#8631;</a>
 </div>
 
-<div id="month_stats" style="width:1000px; height:300px;"></div>
-<div id="day_stats" style="margin-top:50px;"></div>
+<div id="graph"></div>
+<div id="day_stats"></div>
+<div id="date">{{date}}</div>
 {% endblock %}

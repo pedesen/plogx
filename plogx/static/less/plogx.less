@@ -1,7 +1,33 @@
+@graph_width: 1000px;
+
 body {
 	font-family: Verdana, sans serif;
 }
 
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
 #header {
 	padding: 10px;
+	font-size: 24px;
+	width: @graph_width;
+	text-align: center;
+}
+
+#graph {
+	width: @graph_width;
+	height: 300px;
+}
+
+#day_stats {
+	margin-top: 50px;
+}
+
+#date {
+	display: none;
 }

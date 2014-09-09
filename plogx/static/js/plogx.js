@@ -35,7 +35,7 @@ $(document).ready(function(){
           }
         }]
 
-        var plot = $.plot(month_stats, dataset, {
+        var plot = $.plot(graph, dataset, {
           xaxis: {
             tickSize: 1
           },
@@ -45,9 +45,15 @@ $(document).ready(function(){
         });
     }
 
-    $.getJSON( "/stats_per_month", generate_stats_per_month);
+    var current_date = $('#date').html();
+    var date_string = moment(current_date, "YYYYMM");
+    $('#current_month').html(date_string.format("MMMM YYYY"));
+    $('#prev').attr("href", date_string.subtract("M", 1).format("YYYYMM"));
+    $('#next').attr("href", date_string.add("M", 2).format("YYYYMM"));
 
-    $("#month_stats").bind("plotclick", function(event, pos, item){
+    $.getJSON( "/stats_per_month/"+current_date, generate_stats_per_month);
+
+    $("#graph").bind("plotclick", function(event, pos, item){
       if (item){
         day = new Date(day_stats[item["dataIndex"]]["day"]["$date"]);
 

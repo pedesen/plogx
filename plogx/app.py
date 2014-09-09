@@ -11,8 +11,12 @@ mongo = PyMongo(app)
 app.debug = True
 
 @app.route("/")
-def overview():
-    return render_template("stats.html")
+@app.route("/stats/<int:date>")
+def overview(date=None):
+    if date is None:
+        now = datetime.now()
+        date = "{0}{1:0>2}".format(now.year, now.month)
+    return render_template("stats.html", date=date)
 
 @app.route("/raw_logs_per_day/<int:date>")
 def raw_logs_per_day(date):
