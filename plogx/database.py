@@ -5,13 +5,21 @@ def _aggregate_day_stats(db, log_day):
 
     start_date = log_day
     end_date = start_date + timedelta(days=1)
+    excluded_paths = [
+        "/assets/css/style.min.css",
+        "/assets/css/pygments.css",
+        "/assets/js/jquery.min.js",
+        "/assets/js/bootstrap.min.js"
+    ]
 
     page_impressions = db.log_items.aggregate([
         # match and filter all documents for the specified day
         {"$match":
             {"timestamp": {
                 "$gte": start_date,
-                "$lt": end_date }}},
+                "$lt": end_date},
+            "path": {
+                "$nin": excluded_paths}}},
         {"$group": {
             "_id": {
                 "ip_address": "$ip_address",
