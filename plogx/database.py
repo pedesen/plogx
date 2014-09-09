@@ -6,6 +6,7 @@ def _aggregate_day_stats(db, log_day):
     start_date = log_day
     end_date = start_date + timedelta(days=1)
     excluded_paths = [
+        "/feed.xml",
         "/assets/css/style.min.css",
         "/assets/css/pygments.css",
         "/assets/js/jquery.min.js",
