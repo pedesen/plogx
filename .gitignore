@@ -2,3 +2,4 @@
 *.pyc
 *.*~
 /plogx/static/css
+/plogx/config.py

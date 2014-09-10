@@ -1,17 +1,14 @@
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timedelta
+try:
+    import config
+except ImportError:
+    import config_example as config
 
 def _aggregate_day_stats(db, log_day):
 
     start_date = log_day
     end_date = start_date + timedelta(days=1)
-    excluded_paths = [
-        "/feed.xml",
-        "/assets/css/style.min.css",
-        "/assets/css/pygments.css",
-        "/assets/js/jquery.min.js",
-        "/assets/js/bootstrap.min.js"
-    ]
 
     page_impressions = db.log_items.aggregate([
         # match and filter all documents for the specified day
@@ -20,7 +17,10 @@ def _aggregate_day_stats(db, log_day):
                 "$gte": start_date,
                 "$lt": end_date},
             "path": {
-                "$nin": excluded_paths}}},
+                "$nin": config.excluded_paths},
+            "ip_address": {
+                "$nin": config.excluded_ips}
+            }},
         {"$group": {
             "_id": {
                 "ip_address": "$ip_address",
