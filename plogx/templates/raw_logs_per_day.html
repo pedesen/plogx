@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/jplist/5.1.35/jplist.min.js"></script>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jplist/5.1.35/jplist.min.css" />
+<script type="text/javascript" src="/static/js/multifilter.min.js"></script>
 <script type="text/javascript" src="/static/js/raw_logs.js"></script>
 
 <style type="text/css">
@@ -14,26 +13,30 @@ table td {
 table {
     border-spacing: 0px;
 }
+.filter {
+    margin: 5px 0;
+    width:100%;
+}
 </style>
-
 {% endblock %}
 
 {% block content %}
+
 <table>
-    <tr>
-        <th>Timestamp</th>
-        <th>Path</th>
-        <th>IP Address</th>
-        <th>Client</th>
-        <th>Referrer</th>
-    </tr>
+    <thead>
+        <th>Timestamp<br/><input class='filter' name='timestamp' placeholder='Filter' data-col='Timestamp'/></th>
+        <th>Path<br/><input class='filter' name='path' placeholder='Filter' data-col='Path'/></th>
+        <th>IP Address<br/><input class='filter' name='ip_address' placeholder='Filter' data-col='IP Address' id="ip_address"/></th>
+        <th>Client<br/><input class='filter' name='client' placeholder='Filter' data-col='Client'/></th>
+        <th>Referrer<br/><input class='filter' name='referrer' placeholder='Filter' data-col='Referrer'/></th>
+    </thead>
     {% for item in log_items %}
     <tr>
         <td>{{ item.timestamp }}</td>
         <td>{{ item.path|truncate(40, killwords=True) }}</td>
         <td>{{ item.ip_address}}</td>
-        <td>{{ item.client|truncate(40) }}</td>
-        <td>{{ item.referrer|truncate(60) }}</td>
+        <td>{{ item.client|truncate(50) }}</td>
+        <td>{{ item.referrer|truncate(80) }}</td>
     </tr>
     {% endfor %}
 </table>
