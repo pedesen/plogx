@@ -50,6 +50,9 @@ $(document).ready(function(){
           xaxis: {
             tickSize: 1
           },
+          yaxis: {
+            minTickSize: 5
+          },
           grid: {
             clickable: true
           }
