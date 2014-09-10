@@ -10,10 +10,11 @@ $(document).ready(function(){
         var path_stats = data["path_stats"];
 
         if(path_stats) {
+            var path_stats_html = "<b>Stats for "+moment(current_date).format("MMMM YYYY")+":</b><br/>";
             for (var i = 0; i < path_stats.length; i++) {
+                console.log(path_stats[i]);
                 path_stats_html+=path_stats[i]["num_visits"]+"x "+path_stats[i]["path"]+"<br/>";
             }
-            var path_stats_html = "<b>Stats for "+moment(current_date).format("MMMM YYYY")+":</b><br/>";
             $("#month_stats").html(path_stats_html);  
         }
         
@@ -60,7 +61,6 @@ $(document).ready(function(){
         });
     }
 
-    
     var current_date = moment(current_year_month, "YYYYMM");
     $('#current_month').html(current_date.format("MMMM YYYY"));
     $('#prev').attr("href", "/stats/"+current_date.subtract("M", 1).format("YYYYMM"));
