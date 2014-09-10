@@ -5,17 +5,18 @@ $(document).ready(function(){
     var generate_stats_per_month = function(data){
         var chart_visits = new Array();
         var chart_page_impr = new Array();
-        
-        var path_stats = data["path_stats"];
-        day_stats = data["day_stats"];
-        
         var current_date = moment(current_year_month, "YYYYMM");
-        var path_stats_html = "<b>Stats for "+moment(current_date).format("MMMM YYYY")+":</b><br/>";
-        for (var i = 0; i < path_stats.length; i++) {
-            path_stats_html+=path_stats[i]["num_visits"]+"x "+path_stats[i]["path"]+"<br/>";
-        }
+        day_stats = data["day_stats"];
+        var path_stats = data["path_stats"];
 
-        $("#month_stats").html(path_stats_html);
+        if(path_stats) {
+            for (var i = 0; i < path_stats.length; i++) {
+                path_stats_html+=path_stats[i]["num_visits"]+"x "+path_stats[i]["path"]+"<br/>";
+            }
+            var path_stats_html = "<b>Stats for "+moment(current_date).format("MMMM YYYY")+":</b><br/>";
+            $("#month_stats").html(path_stats_html);  
+        }
+        
 
         for (var i = 0; i < day_stats.length; i++) {
             chart_visits.push([i+1, day_stats[i]["num_visits"]])
