@@ -1,26 +1,41 @@
 from pymongo.errors import DuplicateKeyError
 from datetime import datetime, timedelta
+import re
 try:
     import config
 except ImportError:
     import config_example as config
+
+
 
 def _aggregate_day_stats(db, log_day):
 
     start_date = log_day
     end_date = start_date + timedelta(days=1)
 
+    excluded_clients = []
+    if config.excluded_clients:
+        excluded_clients = [re.compile(x) for x in config.excluded_clients]
+
+    match_filter = {
+        "timestamp": {
+            "$gte": start_date,
+            "$lt": end_date
+        },
+        "path": {
+            "$nin": config.excluded_paths
+        },
+        "ip_address": {
+            "$nin": config.excluded_ips
+        },
+        "client": {
+            "$nin": excluded_clients
+        }
+    }
+
     page_impressions = db.log_items.aggregate([
         # match and filter all documents for the specified day
-        {"$match":
-            {"timestamp": {
-                "$gte": start_date,
-                "$lt": end_date},
-            "path": {
-                "$nin": config.excluded_paths},
-            "ip_address": {
-                "$nin": config.excluded_ips}
-            }},
+        {"$match": match_filter},
         {"$group": {
             "_id": {
                 "ip_address": "$ip_address",
@@ -148,9 +163,9 @@ def get_stats_per_month(db, log_month):
 
 def get_raw_logs_per_day(db,log_day):
     """
-    @return: a cursor containing all log items for the specified day
+    @return: a cursor containing all log items for the specified day in reverse order
         [pymongo.cursor.Cursor]
     """
     start_date = datetime.combine(log_day.date(), datetime.min.time())
     end_date = start_date + timedelta(days=1)
-    return db.log_items.find({"timestamp": {"$gte": start_date, "$lt": end_date}})
+    return db.log_items.find({"timestamp": {"$gte": start_date, "$lt": end_date}}).sort("timestamp", -1)
