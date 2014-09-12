@@ -22,7 +22,18 @@ table {
 
 {% block content %}
 
-<table>
+<div id="date">{{ date }}</div>
+<div id="raw_stats_header">Raw stats for <span id="current_day"></span></div>
+
+<div>
+{% if filter_items %}
+    <a href="?filter=false">Filter off</a>
+{% else %}
+    <a href="?filter=true">Filter on</a>
+{% endif %}
+</div>
+
+<table width="100%">
     <thead>
         <th>Timestamp<br/><input class='filter' name='timestamp' placeholder='Filter' data-col='Timestamp'/></th>
         <th>Path<br/><input class='filter' name='path' placeholder='Filter' data-col='Path'/></th>
@@ -33,10 +44,10 @@ table {
     {% for item in log_items %}
     <tr>
         <td>{{ item.timestamp }}</td>
-        <td>{{ item.path|truncate(40, killwords=True) }}</td>
+        <td title="{{item.path}}">{{ item.path|truncate(40, killwords=True) }}</td>
         <td>{{ item.ip_address}}</td>
-        <td>{{ item.client|truncate(50) }}</td>
-        <td>{{ item.referrer|truncate(80) }}</td>
+        <td title="{{item.client}}">{{ item.client|truncate(50) }}</td>
+        <td title="{{item.referrer}}">{{ item.referrer|truncate(80) }}</td>
     </tr>
     {% endfor %}
 </table>
