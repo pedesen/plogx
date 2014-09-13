@@ -1,7 +1,9 @@
 plogx
 =====
 
-plogx is a Flask webapp, which analyses nginx log items stored in a mongodb database
+plogx is a Flask webapp, which analyses, filters and visualizes nginx log items stored in a mongodb database
+
+![plogx screenshot](http://www.pedesen.de/images/plogx_screenshot.png)
 
 ### Installation
 
