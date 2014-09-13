@@ -1,7 +1,7 @@
 plogx
 =====
 
-plogx is a Flask webapp, which analyses, filters and visualizes nginx log items stored in a mongodb database
+plogx is a Flask webapp written in Python, which analyses, filters and visualizes nginx log items stored in a mongodb database.
 
 ![plogx screenshot](http://www.pedesen.de/images/plogx_screenshot.png)
 
@@ -16,10 +16,15 @@ pip install -r requirements
 deactivate
 ```
 
-### Quick Start (Development Server)
+### Quick Start
 
-Please don't use this in production!
+plogx expects a running mongo daemon with a database named `log_db` and a collection named `log_items`.
 
+Because plogx needs existing log data in the database, you have to take care of that. To collect log data in realtime and store them into a database, you can use my fork of [parsible](https://github.com/pedesen/parsible), which works great with nginx logs and mongodb. But you can also write your own parasible-plugins for other webservers like Apache.
+
+#### Start development server
+
+Please don't use this in production! Always serve the flask app with uwsgi and nginx or Apache for example and secure it with basic auth:
 ```
 source env/bin/activate
 python plogx/app.py
