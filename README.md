@@ -20,7 +20,7 @@ deactivate
 
 plogx expects a running mongo daemon with a database named `log_db` and a collection named `log_items`.
 
-Because plogx needs existing log data in the database, you have to take care of that. To collect log data in realtime and store them into a database, you can use my fork of [parsible](https://github.com/pedesen/parsible), which works great with nginx logs and mongodb. But you can also write your own parasible-plugins for other webservers like Apache.
+Because plogx needs existing log data in the database, you have to take care of that. To collect log data in realtime and store them into a database, you can use my fork of [parsible](https://github.com/pedesen/parsible), which works great with nginx logs and mongodb. But you can also write your own parsible-plugins for other webservers like Apache.
 
 #### Start development server
 
