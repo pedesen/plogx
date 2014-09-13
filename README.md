@@ -16,6 +16,8 @@ deactivate
 
 ### Quick Start (Development Server)
 
+Please don't use this in production!
+
 ```
 source env/bin/activate
 python plogx/app.py
