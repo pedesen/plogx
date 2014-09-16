@@ -47,7 +47,7 @@ table {
         <td title="{{item.path}}">{{ item.path|truncate(40, killwords=True) }}</td>
         <td>{{ item.ip_address}}</td>
         <td title="{{item.client}}">{{ item.client|truncate(50) }}</td>
-        <td title="{{item.referrer}}">{{ item.referrer|truncate(80) }}</td>
+        <td title="{{item.referrer}}">{{ item.referrer|truncate(40, killwords=True) }}</td>
     </tr>
     {% endfor %}
 </table>
